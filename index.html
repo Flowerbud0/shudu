@@ -133,7 +133,7 @@
         }
 
         .cell.highlight {
-            background: #fff3e0;
+            background: #fff3e0; /* 高亮背景色（橙色浅底），可自行调整 */
         }
 
         .cell .notes {
@@ -411,14 +411,16 @@
 
         // 绑定所有交互事件
         function bindEvents() {
-            // 单元格点击事件
+            // 单元格点击事件（修复高亮逻辑）
             document.querySelectorAll('.cell').forEach(cell => {
                 cell.addEventListener('click', () => {
-                    // 取消之前选中
+                    // 第一步：清除所有旧的选中和高亮样式（重置状态）
                     document.querySelectorAll('.cell.selected').forEach(c => c.classList.remove('selected'));
+                    document.querySelectorAll('.cell.highlight').forEach(c => c.classList.remove('highlight'));
                     
-                    // 选中当前单元格（非初始数字）
+                    // 第二步：处理当前点击的单元格
                     if (!cell.classList.contains('initial')) {
+                        // 点击可编辑单元格：选中该单元格
                         cell.classList.add('selected');
                         selectedCell = {
                             row: parseInt(cell.dataset.row),
@@ -427,12 +429,9 @@
                     } else {
                         // 点击初始数字：高亮所有相同数字
                         const num = cell.textContent;
-                        highlightSameNumbers(num);
+                        highlightSameNumbers(num); // 先清旧高亮，再执行新高亮
                         selectedCell = null;
                     }
-                    
-                    // 清除高亮
-                    document.querySelectorAll('.cell.highlight').forEach(c => c.classList.remove('highlight'));
                 });
             });
 
@@ -535,7 +534,7 @@
             });
         }
 
-        // 高亮相同数字
+        // 高亮相同数字（修复后可正常生效）
         function highlightSameNumbers(num) {
             document.querySelectorAll('.cell').forEach(cell => {
                 if (cell.textContent === num) {
